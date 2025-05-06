@@ -1,0 +1,54 @@
+﻿@model List<MyApp.Models.Item>
+@{
+    ViewData["Title"] = "Items List";
+}
+
+<h2>Items</h2>
+<a asp-action="Create" class="btn btn-success mb-3">Create New</a>
+
+<div class="card p-3 mt-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Serial Numbers</th>
+                <th>Category</th>
+                <th>Clients</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Price</td>
+                    <td>
+                        @if (item.SerialNumbers != null)
+                        {
+                            foreach (var sn in item.SerialNumbers)
+                            {
+                                <div>@sn.Name</div>
+                            }
+                        }
+                    </td>
+                    <td>@item.Category?.Name</td>
+                    <td>
+                        @if (item.ItemClients != null)
+                        {
+                            foreach (var ic in item.ItemClients)
+                            {
+                                <div>@ic.Client?.Name</div>
+                            }
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info ms-1">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger ms-1">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
