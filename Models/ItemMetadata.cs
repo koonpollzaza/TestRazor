@@ -42,15 +42,40 @@ namespace MyApp.Models
                                              .ThenInclude(c => c.Client)
                                              .ToListAsync();
         }
+        //public async Task<Item> Update(MyAppContext dbContext)
+        //{
+        //    IsDeleted = false;
+        //    UpdatedBy = "John";
+        //    UpdatedDate = DateTime.Now;
+        //    dbContext.Items.Update(this);
+        //    await dbContext.SaveChangesAsync();
+        //    return this;
+        //}
         public async Task<Item> Update(MyAppContext dbContext)
         {
-            IsDeleted = false;
-            UpdatedBy = "John";
-            UpdatedDate = DateTime.Now;
-            dbContext.Items.Update(this);
+            var existingItem = await dbContext.Items
+                .Include(i => i.Category)
+                .Include(i => i.SerialNumbers)
+                .Include(i => i.ItemClients)
+                .FirstOrDefaultAsync(i => i.Id == this.Id && i.IsDeleted != true);
+
+            if (existingItem == null)
+                throw new Exception("Item not found");
+
+            // อัปเดตเฉพาะค่าที่ควรอัปเดต
+            existingItem.Name = this.Name;
+            existingItem.Price = this.Price;
+            existingItem.Category = this.Category;
+            existingItem.SerialNumbers = this.SerialNumbers;
+            existingItem.ItemClients = this.ItemClients;
+
+            existingItem.UpdatedBy = "John";
+            existingItem.UpdatedDate = DateTime.Now;
+
             await dbContext.SaveChangesAsync();
-            return this;
+            return existingItem;
         }
+
         public async Task<Item?> GetById(MyAppContext dbContext, int id)
         {
             Item? item = await dbContext.Items.Include(i => i.Category)

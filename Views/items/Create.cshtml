@@ -3,46 +3,46 @@
     ViewData["Title"] = "Create";
 }
 
-<div class="container mt-4">
+<div class="card p-3 mt-3">
     <h2>Create Item</h2>
-    <form asp-action="Create">
+    <form asp-action="Create" >
         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
         <div class="mb-3">
             <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" />
+            <input asp-for="Name" class="form-control" required/>
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
         <div>
             <label asp-for="Price" class="form-label"></label>
-            <input asp-for="Price" class="form-control" />
+            <input asp-for="Price" class="form-control" required />
             <span asp-validation-for="Price" class="text-danger"></span>
         </div>
 
         <div>
             <label class="form-label">Serial Number</label>
-            <input type="text" name="SerialName" class="form-control" />
+            <input type="text" name="SerialName" class="form-control" required />
         </div>
 
         <div>
-            <label asp-for="Category" class="form-label"></label>
-            <select asp-for="Category" class="form-select" asp-items="ViewBag.Categories">
+            <label asp-for="CategoryId" class="form-label"></label>
+            <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories" required>
                 <option value="">- Select -</option>
             </select>
-            <span asp-validation-for="Category" class="text-danger"></span>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Client Name</label>
-            <input type="text" name="ClientName" class="form-control" />
+            <input type="text" name="ClientName" class="form-control" required />
         </div>
-
         <button type="submit" class="btn btn-success">Create</button>
         <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+
     </form>
 </div>
-
+<br />
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

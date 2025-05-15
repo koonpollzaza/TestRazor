@@ -21,6 +21,7 @@ namespace MyApp.Controllers
         public async Task<IActionResult> Index()
         {
             List<Item> items = await _context.Items
+            .Where(i => i.IsDeleted != true )
             .Include(i => i.SerialNumbers)
             .Include(i => i.Category)
             .Include(i => i.ItemClients) // ต้องใช้ ItemClients
@@ -42,6 +43,7 @@ namespace MyApp.Controllers
                 .Include(i => i.ItemClients)
                 .ThenInclude(ic => ic.Client)
                 .FirstOrDefaultAsync(m => m.Id == id);
+                //.FirstOrDefaultAsync(m => m.Id == id);
             if (item == null)
             {
                 return NotFound();
@@ -69,6 +71,7 @@ namespace MyApp.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(item);
+                await item.Create(_context);
                 await _context.SaveChangesAsync(); // item.Id ถูกสร้างที่นี่
                 var SerialName = Request.Form["SerialName"];
                 if (!string.IsNullOrWhiteSpace(SerialName))
@@ -134,6 +137,8 @@ namespace MyApp.Controllers
                 return NotFound();
             if (ModelState.IsValid)
             {
+                await item.Update(_context);
+
                 var existingItem = await _context.Items
                     .Include(i => i.SerialNumbers)
                     .Include(i => i.ItemClients)
@@ -212,9 +217,10 @@ namespace MyApp.Controllers
                 .FirstOrDefaultAsync(i => i.Id == id);
             if (item != null)
             {
-                _context.SerialNumbers.RemoveRange(item.SerialNumbers);
-                _context.ItemClients.RemoveRange(item.ItemClients);
-                _context.Items.Remove(item);
+                //_context.SerialNumbers.RemoveRange(item.SerialNumbers);
+                //_context.ItemClients.RemoveRange(item.ItemClients);
+                //_context.Items.Remove(item);
+                item.IsDeleted = true;
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
